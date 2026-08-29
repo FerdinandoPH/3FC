@@ -95,6 +95,9 @@ make DEBUG=1    # -Og -g3, con símbolos legibles
 make clean
 ```
 
+Al publicar una release en GitHub se ejecuta `.github/workflows/release.yml`, que compila
+en el contenedor de devkitPro y adjunta `3FC.3dsx`, `3FC.smdh` y `3FC.cia` a la release.
+
 Para probar una compilación en hardware, abre el Homebrew Launcher en la consola y
 ejecuta `3dslink 3FC.3dsx`; un emulador como Azahar también carga el `.3dsx`
 directamente.

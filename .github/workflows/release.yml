@@ -1,0 +1,74 @@
+name: Release build
+
+# Builds 3FC and attaches 3FC.3dsx, 3FC.smdh and 3FC.cia to the release.
+# workflow_dispatch does the same build but leaves the files as workflow
+# artifacts, so a release can be rehearsed without publishing one.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+
+    env:
+      MAKEROM_VERSION: v0.19.0
+      BANNERTOOL_VERSION: 1.2.3
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      # Neither tool ships with the devkitPro image, and `make cia` needs both.
+      # makerom comes from Project_CTR; bannertool from the maintained fork, as
+      # the original Steveice10 repository is gone.
+      - name: Install bannertool and makerom
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/makerom.zip \
+            "https://github.com/3DSGuy/Project_CTR/releases/download/makerom-${MAKEROM_VERSION}/makerom-${MAKEROM_VERSION}-ubuntu_x86_64.zip"
+          python3 -c "import zipfile; zipfile.ZipFile('/tmp/makerom.zip').extractall('/usr/local/bin')"
+
+          curl -fsSL -o /tmp/bannertool.tar.gz \
+            "https://github.com/carstene1ns/3ds-bannertool/releases/download/${BANNERTOOL_VERSION}/bannertool-${BANNERTOOL_VERSION}-linux.tar.gz"
+          tar -xzf /tmp/bannertool.tar.gz -C /usr/local/bin --strip-components=1 \
+            "bannertool-${BANNERTOOL_VERSION}-linux/bannertool"
+
+          chmod +x /usr/local/bin/makerom /usr/local/bin/bannertool
+          command -v makerom
+          bannertool --version
+
+      # Two invocations on purpose: the `cia` target depends on `all` and on the
+      # ELF the sub-make produces, so building both in one parallel run races.
+      - name: Build 3dsx and smdh
+        run: make -j"$(nproc)"
+
+      - name: Package the cia
+        run: make cia
+
+      - name: Check the artifacts exist
+        run: ls -l 3FC.3dsx 3FC.smdh 3FC.cia
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3FC
+          path: |
+            3FC.3dsx
+            3FC.smdh
+            3FC.cia
+          if-no-files-found: error
+
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            3FC.3dsx
+            3FC.smdh
+            3FC.cia
