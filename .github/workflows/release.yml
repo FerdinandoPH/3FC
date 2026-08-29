@@ -1,6 +1,7 @@
 name: Release build
 
-# Builds 3FC and attaches 3FC.3dsx, 3FC.smdh and 3FC.cia to the release.
+# Builds 3FC and attaches 3FC.3dsx and 3FC.cia to the release. The smdh is not
+# published: 3dsxtool embeds it in the 3dsx.
 # workflow_dispatch does the same build but leaves the files as workflow
 # artifacts, so a release can be rehearsed without publishing one.
 on:
@@ -30,7 +31,6 @@ jobs:
           name: build-output
           path: |
             3FC.3dsx
-            3FC.smdh
             3FC.elf
           if-no-files-found: error
           retention-days: 1
@@ -89,7 +89,7 @@ jobs:
             -icon icon.icn -banner banner.bnr -exefslogo -target t
 
       - name: Check the artifacts exist
-        run: ls -l 3FC.3dsx 3FC.smdh 3FC.cia
+        run: ls -l 3FC.3dsx 3FC.cia
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
@@ -97,7 +97,6 @@ jobs:
           name: 3FC
           path: |
             3FC.3dsx
-            3FC.smdh
             3FC.cia
           if-no-files-found: error
 
@@ -107,5 +106,4 @@ jobs:
         with:
           files: |
             3FC.3dsx
-            3FC.smdh
             3FC.cia

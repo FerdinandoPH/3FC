@@ -93,7 +93,7 @@ make clean
 ```
 
 Publishing a GitHub release runs `.github/workflows/release.yml`, which builds in the
-devkitPro container and attaches `3FC.3dsx`, `3FC.smdh` and `3FC.cia` to it.
+devkitPro container and attaches `3FC.3dsx` and `3FC.cia` to it.
 
 To try a build on hardware, open the Homebrew Launcher on the console and run
 `3dslink 3FC.3dsx`; an emulator such as Azahar also loads the `.3dsx` directly.
