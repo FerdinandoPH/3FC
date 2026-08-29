@@ -29,7 +29,7 @@ jobs:
       # the original Steveice10 repository is gone.
       - name: Install bannertool and makerom
         run: |
-          set -euo pipefail
+          set -eu
           curl -fsSL -o /tmp/makerom.zip \
             "https://github.com/3DSGuy/Project_CTR/releases/download/makerom-${MAKEROM_VERSION}/makerom-${MAKEROM_VERSION}-ubuntu_x86_64.zip"
           python3 -c "import zipfile; zipfile.ZipFile('/tmp/makerom.zip').extractall('/usr/local/bin')"
