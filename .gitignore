@@ -1,31 +1,7 @@
-# artefactos de compilación / build artifacts
+# Build artifacts
 build/
 *.3dsx
 *.smdh
 *.elf
 *.cia
 *.map
-
-# datos de prueba locales / local test data
-testdata/
-
-# scripts y notas de desarrollo local / local development scripts and notes
-run.sh
-gdb.sh
-ftpcli.md
-
-# editores y herramientas / editors and tooling
-.claude/
-.idea
-.vscode
-.mcp.json
-.ripgreprc
-
-# ficheros del entorno montados en la raíz / environment files mounted at the root
-.bashrc
-.bash_profile
-.profile
-.zshrc
-.zprofile
-.gitconfig
-.gitmodules
